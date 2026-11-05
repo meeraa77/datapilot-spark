@@ -10,6 +10,30 @@ REPORT_PATH = "outputs/cleaning_report.json"
 TARGET = "fare_amount"
 
 
+def remove_invalid(df):
+    """Drop rows with impossible values."""
+    return df.filter(
+        (F.col("fare_amount") > 0)
+        & (F.col("fare_amount") < 500)
+        & (F.col("trip_distance") > 0)
+        & (F.col("trip_distance") < 200)
+        & (F.col("tpep_dropoff_datetime") > F.col("tpep_pickup_datetime"))
+    )
+
+
+def fill_nulls(df, cols):
+    """Fill numeric nulls with the median. Returns (df, report)."""
+    fills = {}
+    for c in cols:
+        if c in df.columns:
+            nulls = df.filter(F.col(c).isNull()).count()
+            if nulls > 0:
+                med = df.approxQuantile(c, [0.5], 0.01)[0]
+                fills[c] = {"filled_with_median": med, "nulls_filled": nulls}
+                df = df.fillna({c: med})
+    return df, fills
+
+
 def run(raw_path=RAW_PATH, out_path=OUT_PATH, report_path=REPORT_PATH):
     start = time.perf_counter()
     spark = get_spark("Clean")
@@ -41,13 +65,7 @@ def run(raw_path=RAW_PATH, out_path=OUT_PATH, report_path=REPORT_PATH):
     log("drop_null_target", f"{TARGET} is null", n1, n2)
 
     # 3. Drop impossible values
-    df = df.filter(
-        (F.col("fare_amount") > 0)
-        & (F.col("fare_amount") < 500)
-        & (F.col("trip_distance") > 0)
-        & (F.col("trip_distance") < 200)
-        & (F.col("tpep_dropoff_datetime") > F.col("tpep_pickup_datetime"))
-    )
+    df = remove_invalid(df)
     n3 = df.count()
     log("drop_invalid_values",
         "fare <= 0 or >= 500, distance <= 0 or >= 200, dropoff not after pickup",
@@ -55,14 +73,7 @@ def run(raw_path=RAW_PATH, out_path=OUT_PATH, report_path=REPORT_PATH):
 
     # 4. Fill missing values
     fill_cols = ["passenger_count", "RatecodeID", "congestion_surcharge", "Airport_fee"]
-    fills = {}
-    for c in fill_cols:
-        if c in df.columns:
-            nulls = df.filter(F.col(c).isNull()).count()
-            if nulls > 0:
-                med = df.approxQuantile(c, [0.5], 0.01)[0]
-                fills[c] = {"filled_with_median": med, "nulls_filled": nulls}
-                df = df.fillna({c: med})
+    df, fills = fill_nulls(df, fill_cols)
     report["fills"] = fills
 
     if "store_and_fwd_flag" in df.columns:
