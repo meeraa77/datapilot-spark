@@ -1,0 +1,47 @@
+{
+  "steps": [
+    {
+      "step": "remove_duplicates",
+      "reason": "exact duplicate rows",
+      "rows_before": 3724889,
+      "rows_after": 3724889,
+      "rows_removed": 0
+    },
+    {
+      "step": "drop_null_target",
+      "reason": "fare_amount is null",
+      "rows_before": 3724889,
+      "rows_after": 3724889,
+      "rows_removed": 0
+    },
+    {
+      "step": "drop_invalid_values",
+      "reason": "fare <= 0 or >= 500, distance <= 0 or >= 200, dropoff not after pickup",
+      "rows_before": 3724889,
+      "rows_after": 3516799,
+      "rows_removed": 208090
+    }
+  ],
+  "rows_raw": 3724889,
+  "fills": {
+    "passenger_count": {
+      "filled_with_median": 1.0,
+      "nulls_filled": 994660
+    },
+    "RatecodeID": {
+      "filled_with_median": 1.0,
+      "nulls_filled": 994660
+    },
+    "congestion_surcharge": {
+      "filled_with_median": 2.5,
+      "nulls_filled": 994660
+    },
+    "Airport_fee": {
+      "filled_with_median": 0.0,
+      "nulls_filled": 994660
+    }
+  },
+  "rows_final": 3516799,
+  "rows_removed_total": 208090,
+  "seconds": 41.3
+}
