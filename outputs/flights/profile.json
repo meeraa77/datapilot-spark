@@ -1,0 +1,286 @@
+{
+  "dataset_name": "flights",
+  "row_count": 5819079,
+  "column_count": 31,
+  "duplicate_count": 0,
+  "columns": [
+    {
+      "name": "YEAR",
+      "type": "int",
+      "null_count": 0,
+      "distinct": 1,
+      "kind": "categorical",
+      "role": "feature"
+    },
+    {
+      "name": "MONTH",
+      "type": "int",
+      "null_count": 0,
+      "distinct": 12,
+      "kind": "categorical",
+      "role": "feature"
+    },
+    {
+      "name": "DAY",
+      "type": "int",
+      "null_count": 0,
+      "distinct": 32,
+      "kind": "numeric",
+      "role": "feature"
+    },
+    {
+      "name": "DAY_OF_WEEK",
+      "type": "int",
+      "null_count": 0,
+      "distinct": 7,
+      "kind": "categorical",
+      "role": "feature"
+    },
+    {
+      "name": "AIRLINE",
+      "type": "string",
+      "null_count": 0,
+      "distinct": 13,
+      "kind": "categorical",
+      "role": "feature"
+    },
+    {
+      "name": "FLIGHT_NUMBER",
+      "type": "int",
+      "null_count": 0,
+      "distinct": 6712,
+      "kind": "numeric",
+      "role": "id"
+    },
+    {
+      "name": "TAIL_NUMBER",
+      "type": "string",
+      "null_count": 14721,
+      "distinct": 4715,
+      "kind": "categorical",
+      "role": "id"
+    },
+    {
+      "name": "ORIGIN_AIRPORT",
+      "type": "string",
+      "null_count": 0,
+      "distinct": 602,
+      "kind": "categorical",
+      "role": "feature"
+    },
+    {
+      "name": "DESTINATION_AIRPORT",
+      "type": "string",
+      "null_count": 0,
+      "distinct": 602,
+      "kind": "categorical",
+      "role": "feature"
+    },
+    {
+      "name": "SCHEDULED_DEPARTURE",
+      "type": "int",
+      "null_count": 0,
+      "distinct": 1338,
+      "kind": "numeric",
+      "role": "feature"
+    },
+    {
+      "name": "DEPARTURE_TIME",
+      "type": "int",
+      "null_count": 86153,
+      "distinct": 1496,
+      "kind": "numeric",
+      "role": "leakage"
+    },
+    {
+      "name": "DEPARTURE_DELAY",
+      "type": "int",
+      "null_count": 86153,
+      "distinct": 1201,
+      "kind": "numeric",
+      "role": "leakage"
+    },
+    {
+      "name": "TAXI_OUT",
+      "type": "int",
+      "null_count": 89047,
+      "distinct": 180,
+      "kind": "numeric",
+      "role": "leakage"
+    },
+    {
+      "name": "WHEELS_OFF",
+      "type": "int",
+      "null_count": 89047,
+      "distinct": 1496,
+      "kind": "numeric",
+      "role": "leakage"
+    },
+    {
+      "name": "SCHEDULED_TIME",
+      "type": "int",
+      "null_count": 6,
+      "distinct": 532,
+      "kind": "numeric",
+      "role": "feature"
+    },
+    {
+      "name": "ELAPSED_TIME",
+      "type": "int",
+      "null_count": 105071,
+      "distinct": 698,
+      "kind": "numeric",
+      "role": "leakage"
+    },
+    {
+      "name": "AIR_TIME",
+      "type": "int",
+      "null_count": 105071,
+      "distinct": 664,
+      "kind": "numeric",
+      "role": "leakage"
+    },
+    {
+      "name": "DISTANCE",
+      "type": "int",
+      "null_count": 0,
+      "distinct": 1320,
+      "kind": "numeric",
+      "role": "feature"
+    },
+    {
+      "name": "WHEELS_ON",
+      "type": "int",
+      "null_count": 92513,
+      "distinct": 1496,
+      "kind": "numeric",
+      "role": "leakage"
+    },
+    {
+      "name": "TAXI_IN",
+      "type": "int",
+      "null_count": 92513,
+      "distinct": 183,
+      "kind": "numeric",
+      "role": "leakage"
+    },
+    {
+      "name": "SCHEDULED_ARRIVAL",
+      "type": "int",
+      "null_count": 0,
+      "distinct": 1490,
+      "kind": "numeric",
+      "role": "feature"
+    },
+    {
+      "name": "ARRIVAL_TIME",
+      "type": "int",
+      "null_count": 92513,
+      "distinct": 1496,
+      "kind": "numeric",
+      "role": "leakage"
+    },
+    {
+      "name": "ARRIVAL_DELAY",
+      "type": "int",
+      "null_count": 105071,
+      "distinct": 1223,
+      "kind": "numeric",
+      "role": "leakage"
+    },
+    {
+      "name": "DIVERTED",
+      "type": "int",
+      "null_count": 0,
+      "distinct": 2,
+      "kind": "categorical",
+      "role": "leakage"
+    },
+    {
+      "name": "CANCELLED",
+      "type": "int",
+      "null_count": 0,
+      "distinct": 2,
+      "kind": "categorical",
+      "role": "leakage"
+    },
+    {
+      "name": "CANCELLATION_REASON",
+      "type": "string",
+      "null_count": 5729195,
+      "distinct": 4,
+      "kind": "categorical",
+      "role": "leakage"
+    },
+    {
+      "name": "AIR_SYSTEM_DELAY",
+      "type": "int",
+      "null_count": 4755640,
+      "distinct": 561,
+      "kind": "numeric",
+      "role": "leakage"
+    },
+    {
+      "name": "SECURITY_DELAY",
+      "type": "int",
+      "null_count": 4755640,
+      "distinct": 153,
+      "kind": "numeric",
+      "role": "leakage"
+    },
+    {
+      "name": "AIRLINE_DELAY",
+      "type": "int",
+      "null_count": 4755640,
+      "distinct": 1098,
+      "kind": "numeric",
+      "role": "leakage"
+    },
+    {
+      "name": "LATE_AIRCRAFT_DELAY",
+      "type": "int",
+      "null_count": 4755640,
+      "distinct": 686,
+      "kind": "numeric",
+      "role": "leakage"
+    },
+    {
+      "name": "WEATHER_DELAY",
+      "type": "int",
+      "null_count": 4755640,
+      "distinct": 608,
+      "kind": "numeric",
+      "role": "leakage"
+    }
+  ],
+  "suggested_target": "is_delayed",
+  "suggested_problem_type": "classification",
+  "derived_target": {
+    "name": "is_delayed",
+    "source_column": "ARRIVAL_DELAY",
+    "rule": "ARRIVAL_DELAY > 15",
+    "created_in": "spark_jobs/clean.py"
+  },
+  "excluded_columns": [
+    "FLIGHT_NUMBER",
+    "TAIL_NUMBER",
+    "DEPARTURE_TIME",
+    "DEPARTURE_DELAY",
+    "TAXI_OUT",
+    "WHEELS_OFF",
+    "ELAPSED_TIME",
+    "AIR_TIME",
+    "WHEELS_ON",
+    "TAXI_IN",
+    "ARRIVAL_TIME",
+    "ARRIVAL_DELAY",
+    "DIVERTED",
+    "CANCELLED",
+    "CANCELLATION_REASON",
+    "AIR_SYSTEM_DELAY",
+    "SECURITY_DELAY",
+    "AIRLINE_DELAY",
+    "LATE_AIRCRAFT_DELAY",
+    "WEATHER_DELAY"
+  ]
+}

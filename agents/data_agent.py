@@ -1,10 +1,37 @@
 import json
 import os
+import sys
+from pyspark import StorageLevel
 from pyspark.sql import functions as F
 from spark_jobs.spark_session import get_spark
 
 NUMERIC_TYPES = ("int", "bigint", "double", "float", "smallint", "tinyint", "decimal")
 TARGET_HINTS = ["target", "label", "fare_amount", "price", "churn", "default"]
+
+# Per-dataset rules. Taxi needs none (hint matching works).
+DATASET_CONFIG = {
+    "flights": {
+        "target": "is_delayed",
+        "problem_type": "classification",
+        "derived_target": {
+            "name": "is_delayed",
+            "source_column": "ARRIVAL_DELAY",
+            "rule": "ARRIVAL_DELAY > 15",
+            "created_in": "spark_jobs/clean.py",
+        },
+        "id_like": ["FLIGHT_NUMBER", "TAIL_NUMBER"],
+        # Assumption: we predict delay at scheduling time, so anything
+        # only known after departure/arrival is leakage.
+        "leakage": [
+            "DEPARTURE_TIME", "DEPARTURE_DELAY", "TAXI_OUT", "WHEELS_OFF",
+            "ELAPSED_TIME", "AIR_TIME", "WHEELS_ON", "TAXI_IN",
+            "ARRIVAL_TIME", "ARRIVAL_DELAY", "DIVERTED", "CANCELLED",
+            "CANCELLATION_REASON", "AIR_SYSTEM_DELAY", "SECURITY_DELAY",
+            "AIRLINE_DELAY", "LATE_AIRCRAFT_DELAY", "WEATHER_DELAY",
+        ],
+    },
+}
+
 
 def classify(name, dtype, distinct, row_count):
     if dtype.startswith("timestamp") or dtype == "date":
@@ -16,13 +43,29 @@ def classify(name, dtype, distinct, row_count):
     return "categorical"
 
 
-def run(dataset_path, dataset_name="taxi", out_path="outputs/profile.json"):
+def assign_role(name, kind, cfg, target):
+    if name == target:
+        return "target"
+    if name in cfg.get("leakage", []):
+        return "leakage"
+    if kind == "id" or name in cfg.get("id_like", []):
+        return "id"
+    return "feature"
+
+
+def run(dataset_path, dataset_name="taxi", out_path=None):
+    if out_path is None:
+        out_path = f"outputs/{dataset_name}/profile.json"
+    cfg = DATASET_CONFIG.get(dataset_name, {})
     spark = get_spark("DataAgent")
 
     if dataset_path.endswith(".parquet"):
         df = spark.read.parquet(dataset_path)
     else:
         df = spark.read.csv(dataset_path, header=True, inferSchema=True)
+
+    # Several passes follow; keep the data in memory/disk instead of rereading the CSV
+    df = df.persist(StorageLevel.MEMORY_AND_DISK)
 
     row_count = df.count()
     dup_count = row_count - df.dropDuplicates().count()
@@ -35,6 +78,9 @@ def run(dataset_path, dataset_name="taxi", out_path="outputs/profile.json"):
         [F.approx_count_distinct(c).alias(c) for c in df.columns]
     ).first().asDict()
 
+    # Target: explicit config first, then name hints
+    target = cfg.get("target") or next((h for h in TARGET_HINTS if h in df.columns), None)
+
     columns = []
     for name, dtype in df.dtypes:
         kind = classify(name, dtype, distinct[name], row_count)
@@ -44,13 +90,14 @@ def run(dataset_path, dataset_name="taxi", out_path="outputs/profile.json"):
             "null_count": int(nulls[name] or 0),
             "distinct": int(distinct[name]),
             "kind": kind,
+            "role": assign_role(name, kind, cfg, target),
         })
 
-    target = next((h for h in TARGET_HINTS if h in df.columns), None)
-    problem = None
-    if target:
-        tkind = next(c["kind"] for c in columns if c["name"] == target)
-        problem = "regression" if tkind == "numeric" else "classification"
+    problem = cfg.get("problem_type")
+    if problem is None and target:
+        tkind = next((c["kind"] for c in columns if c["name"] == target), None)
+        if tkind:
+            problem = "regression" if tkind == "numeric" else "classification"
 
     profile = {
         "dataset_name": dataset_name,
@@ -60,6 +107,8 @@ def run(dataset_path, dataset_name="taxi", out_path="outputs/profile.json"):
         "columns": columns,
         "suggested_target": target,
         "suggested_problem_type": problem,
+        "derived_target": cfg.get("derived_target"),
+        "excluded_columns": [c["name"] for c in columns if c["role"] in ("leakage", "id")],
     }
 
     folder = os.path.dirname(out_path)
@@ -69,9 +118,12 @@ def run(dataset_path, dataset_name="taxi", out_path="outputs/profile.json"):
         json.dump(profile, f, indent=2)
 
     print("Saved", out_path)
+    df.unpersist()
     spark.stop()
     return profile
 
 
 if __name__ == "__main__":
-    run("data/raw/yellow_tripdata_2026-01.parquet")
+    path = sys.argv[1] if len(sys.argv) > 1 else "data/raw/yellow_tripdata_2026-01.parquet"
+    name = sys.argv[2] if len(sys.argv) > 2 else "taxi"
+    run(path, name)
