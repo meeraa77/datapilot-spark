@@ -1,7 +1,12 @@
 .venv/
+venv/
+__pycache__/
 .env
 data/raw/
 data/processed/
-__pycache__/
-*.pyc
 data/benchmark/
+scratch/
+*.parquet
+*.csv
+*.pyc
+!outputs/*.csv

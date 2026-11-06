@@ -1,5 +1,5 @@
 {
-  "dataset": "flights",
+  "dataset_name": "flights",
   "steps": [
     {
       "step": "remove_duplicates",
@@ -10,51 +10,32 @@
     },
     {
       "step": "drop_null_target",
-      "reason": "ARRIVAL_DELAY is null (cancelled or diverted flights: no arrival outcome to predict)",
+      "reason": "delayed is null",
       "rows_before": 5819079,
       "rows_after": 5714008,
       "rows_removed": 105071
     },
     {
       "step": "drop_invalid_values",
-      "reason": "DISTANCE <= 0",
+      "reason": "cancelled or diverted flights, or missing delay values",
       "rows_before": 5714008,
       "rows_after": 5714008,
       "rows_removed": 0
     }
   ],
   "rows_raw": 5819079,
-  "fills": {
-    "AIR_SYSTEM_DELAY": {
-      "filled_with": 0,
-      "nulls_filled": 4650569
-    },
-    "SECURITY_DELAY": {
-      "filled_with": 0,
-      "nulls_filled": 4650569
-    },
-    "AIRLINE_DELAY": {
-      "filled_with": 0,
-      "nulls_filled": 4650569
-    },
-    "LATE_AIRCRAFT_DELAY": {
-      "filled_with": 0,
-      "nulls_filled": 4650569
-    },
-    "WEATHER_DELAY": {
-      "filled_with": 0,
-      "nulls_filled": 4650569
-    }
-  },
-  "derived_target": {
-    "name": "is_delayed",
-    "rule": "ARRIVAL_DELAY > 15",
-    "class_counts": {
-      "1": 1023498,
-      "0": 4690510
-    }
-  },
+  "fills": {},
+  "zero_filled_columns": [
+    "AIR_SYSTEM_DELAY",
+    "SECURITY_DELAY",
+    "AIRLINE_DELAY",
+    "LATE_AIRCRAFT_DELAY",
+    "WEATHER_DELAY"
+  ],
+  "dropped_columns": [
+    "CANCELLATION_REASON"
+  ],
   "rows_final": 5714008,
   "rows_removed_total": 105071,
-  "seconds": 69.7
+  "seconds": 60.5
 }

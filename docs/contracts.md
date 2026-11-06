@@ -1,79 +1,135 @@
 # Data Contracts
 
-Any change to a field below must be announced to the whole team before merging, and logged in the Decisions Log at the bottom.
+Any change to a field name or structure must be announced in the group chat
+and logged in `docs/decisions_log.md`.
 
-## 1. outputs/profile.json (Meera -> everyone)
+All outputs are written per dataset: `outputs/<dataset>/<file>.json`
+(datasets so far: `taxi`, `flights`).
+
+---
+
+## 1. profile.json  (Meera -> everyone)
+
+Written by `agents/data_agent.py`.
+Run: `python -m agents.data_agent <dataset>`
+
+| Field | Type | Meaning |
+|---|---|---|
+| dataset | string | Dataset name |
+| row_count | int | Number of rows |
+| column_count | int | Number of columns |
+| columns | list | One object per column: `name`, `type`, `nulls` |
+| numeric_columns | list[string] | Columns with numeric types |
+| categorical_columns | list[string] | All other columns |
+| duplicate_count | int | Rows that are exact duplicates |
+| sample_values | object | Column name -> list of 5 sample values (strings) |
+| suggested_target | string or null | Suggested target column; null means no target |
+| problem_type | string | `classification`, `regression` or `clustering` |
+
+Example (taxi):
 
 ```json
 {
-  "dataset_name": "taxi",
+  "dataset": "taxi",
   "row_count": 3724889,
   "column_count": 20,
-  "duplicate_count": 0,
   "columns": [
-    {"name": "fare_amount", "type": "double", "null_count": 0, "distinct": 9000, "kind": "numeric"}
+    {"name": "RatecodeID", "type": "LongType()", "nulls": 1088058},
+    {"name": "fare_amount", "type": "DoubleType()", "nulls": 0}
   ],
+  "numeric_columns": ["RatecodeID", "fare_amount"],
+  "categorical_columns": ["store_and_fwd_flag"],
+  "duplicate_count": 0,
+  "sample_values": {"fare_amount": ["9.3", "7.9", "14.2", "6.5", "11.0"]},
   "suggested_target": "fare_amount",
-  "suggested_problem_type": "regression"
+  "problem_type": "regression"
 }
 ```
 
-- `kind` is one of: `numeric`, `categorical`, `datetime`, `id`. It is a first guess made by simple rules.
-- `suggested_problem_type` is `regression`, `classification`, or `null` (clustering).
+Rules:
+- Problem type: categorical target -> classification; numeric target with
+  20 or fewer distinct values -> classification; other numeric target ->
+  regression; no target -> clustering.
 
-## 2. data/processed/<dataset_name>/ (Meera -> Indrajith)
+---
 
-- Cleaned Parquet. Created by `python -m spark_jobs.clean`.
-- Not stored in Git. Each person regenerates it locally.
-- Cleaning summary: `outputs/cleaning_report.json` (rows before, after, removed, and the reason for each step).
+## 2. Cleaned data  (Meera -> Indrajith)
 
-## 3. outputs/eda_results.json (Meera -> Ardra)
+- Location: `data/processed/<dataset>/` (Parquet)
+- Column lists come from `profile.json` (`numeric_columns`, `categorical_columns`)
+- Rows changed or dropped are reported in `outputs/<dataset>/cleaning_report.json`
 
-Top-level keys:
-`dataset_name`, `row_count`, `target`, `numeric_columns`, `categorical_columns`, `summary_stats`, `outliers`, `top_correlations`, `target_correlations`, `top_categories`, `histograms`, `by_pickup_hour`, `scatter_sample`, `seconds`
+---
 
-- `summary_stats.<col>`: mean, std, min, q1, median, q3, p99, max
-- `outliers.<col>`: lower_bound, upper_bound, outlier_count, outlier_percent
-- `top_correlations[]`: feature_a, feature_b, correlation
-- `histograms.<col>[]`: bin_start, bin_end, count
-- `scatter_sample[]`: at most about 3000 points (never the full data)
-
-## 4. outputs/model_results.json (Indrajith -> Ardra)
+## 3. eda_results.json  (Meera -> Ardra)   DRAFT
 
 ```json
 {
+  "dataset": "taxi",
+  "summary_stats": {
+    "fare_amount": {"mean": 0.0, "stddev": 0.0, "min": 0.0, "max": 0.0}
+  },
+  "top_correlations": [
+    {"col_a": "trip_distance", "col_b": "fare_amount", "correlation": 0.0}
+  ],
+  "top_categories": {
+    "payment_type": [{"value": "1", "count": 0}]
+  },
+  "outliers": {
+    "fare_amount": {"count": 0, "method": "IQR"}
+  },
+  "chart_data": {
+    "histograms": {"fare_amount": {"bins": [], "counts": []}},
+    "scatter": {"x": "trip_distance", "y": "fare_amount", "points": []}
+  }
+}
+```
+
+---
+
+## 4. model_results.json  (Indrajith -> Ardra)   DRAFT
+
+```json
+{
+  "dataset": "taxi",
   "problem_type": "regression",
   "target": "fare_amount",
-  "models": [
-    {"name": "LinearRegression", "metrics": {"rmse": 4.2, "r2": 0.71}, "train_seconds": 12.1}
-  ],
-  "best_model": "LinearRegression",
-  "feature_importance": [{"feature": "trip_distance", "importance": 0.61}],
+  "model_name": "GBTRegressor",
+  "baseline_model": "LinearRegression",
+  "metrics": {"rmse": 0.0, "r2": 0.0},
+  "baseline_metrics": {"rmse": 0.0, "r2": 0.0},
+  "feature_importance": [{"feature": "trip_distance", "importance": 0.0}],
+  "training_time_sec": 0.0,
   "warnings": []
 }
 ```
 
-## 5. outputs/insights.json (Ardra -> dashboard)
+---
+
+## 5. insights.json  (Ardra -> dashboard)   DRAFT
 
 ```json
-{"findings": [], "limitations": [], "next_steps": []}
+{
+  "dataset": "taxi",
+  "findings": ["..."],
+  "limitations": ["..."],
+  "next_steps": ["..."]
+}
 ```
 
-Every number in an insight must appear in the JSON files above.
+Rule: insights may only use numbers that appear in the other JSON files.
 
-## 6. agents/supervisor.py (Ardra -> all)
+---
 
-`run_pipeline(dataset_path)` runs all stages in order and writes every JSON file.
+## 6. Supervisor interface  (Ardra -> all)
 
-## Known issues (for the team)
+`agents/supervisor.py` provides `run_pipeline(dataset_name)`.
+It runs all stages in order and writes every JSON file above.
 
-- Do not use as features (they leak the target): `total_amount`, `tip_amount`, `tolls_amount`, `mta_tax`, `extra`, `improvement_surcharge`, `congestion_surcharge`, `Airport_fee`, `cbd_congestion_fee`.
-- `VendorID`, `RatecodeID`, `payment_type`, `PULocationID`, `DOLocationID` are category codes stored as numbers.
-- Some rows have odd values (for example a distance of 0.01 with a high fare). Cleaning only removes impossible values.
+---
 
-## Decisions Log
+## Change log
 
-| Date | Decision | Who |
+| Date | Change | Announced to |
 |---|---|---|
-| 05-11-2026 | Dataset 1: NYC Yellow Taxi Jan 2026, target fare_amount (regression) | Meera |
-| 05-11-2026 | Windows runs need winutils at C:\hadoop (handled in spark_session.py) | Meera |
+| 06-11-2026 | Initial draft of all contracts | Indrajith, Ardra |

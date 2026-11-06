@@ -1,4 +1,5 @@
 {
+  "dataset_name": "taxi",
   "steps": [
     {
       "step": "remove_duplicates",
@@ -41,7 +42,9 @@
       "nulls_filled": 994660
     }
   },
+  "zero_filled_columns": [],
+  "dropped_columns": [],
   "rows_final": 3516799,
   "rows_removed_total": 208090,
-  "seconds": 61.5
+  "seconds": 58.9
 }
