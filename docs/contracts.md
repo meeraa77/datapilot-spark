@@ -18,13 +18,21 @@ Run: `python -m agents.data_agent <dataset>`
 | dataset | string | Dataset name |
 | row_count | int | Number of rows |
 | column_count | int | Number of columns |
-| columns | list | One object per column: `name`, `type`, `nulls` |
-| numeric_columns | list[string] | Columns with numeric types |
-| categorical_columns | list[string] | All other columns |
+| columns | list | One object per column: `name`, `type`, `kind`, `nulls`, `distinct` |
+| numeric_columns | list[string] | Columns with kind `numeric` |
+| categorical_columns | list[string] | Columns with kind `categorical` (strings, booleans, numeric columns with 20 or fewer distinct values) |
+| datetime_columns | list[string] | Columns with kind `datetime` (timestamp or date types) |
+| id_columns | list[string] | Columns with kind `id` (integer columns that are 95% or more unique). **Never use as ML features.** |
 | duplicate_count | int | Rows that are exact duplicates |
 | sample_values | object | Column name -> list of 5 sample values (strings) |
 | suggested_target | string or null | Suggested target column; null means no target |
 | problem_type | string | `classification`, `regression` or `clustering` |
+| warning | string or null | Explains why the problem type fell back to clustering; otherwise null |
+
+Column `kind` is one of `numeric`, `categorical`, `datetime`, `id`.
+Every column appears in exactly one of the four lists above.
+`type` is the Spark type as text (for example `bigint`, `double`, `timestamp_ntz`).
+`distinct` is an approximate distinct count.
 
 Example (taxi):
 
@@ -34,29 +42,40 @@ Example (taxi):
   "row_count": 3724889,
   "column_count": 20,
   "columns": [
-    {"name": "RatecodeID", "type": "LongType()", "nulls": 1088058},
-    {"name": "fare_amount", "type": "DoubleType()", "nulls": 0}
+    {"name": "RatecodeID", "type": "bigint", "kind": "categorical", "nulls": 1088058, "distinct": 7},
+    {"name": "fare_amount", "type": "double", "kind": "numeric", "nulls": 0, "distinct": 9000},
+    {"name": "tpep_pickup_datetime", "type": "timestamp_ntz", "kind": "datetime", "nulls": 0, "distinct": 3400000}
   ],
-  "numeric_columns": ["RatecodeID", "fare_amount"],
-  "categorical_columns": ["store_and_fwd_flag"],
+  "numeric_columns": ["fare_amount"],
+  "categorical_columns": ["RatecodeID", "store_and_fwd_flag"],
+  "datetime_columns": ["tpep_pickup_datetime", "tpep_dropoff_datetime"],
+  "id_columns": [],
   "duplicate_count": 0,
   "sample_values": {"fare_amount": ["9.3", "7.9", "14.2", "6.5", "11.0"]},
   "suggested_target": "fare_amount",
-  "problem_type": "regression"
+  "problem_type": "regression",
+  "warning": null
 }
 ```
 
 Rules:
-- Problem type: categorical target -> classification; numeric target with
-  20 or fewer distinct values -> classification; other numeric target ->
-  regression; no target -> clustering.
+- Column kind: timestamp or date type -> datetime; integer type with 95% or
+  more unique values -> id; other numeric type with 20 or fewer distinct
+  values -> categorical; other numeric type -> numeric; everything else
+  (string, boolean) -> categorical.
+- Problem type follows the target's kind: categorical target ->
+  classification; numeric target -> regression; no target, or a target that
+  is an id or datetime column -> clustering (with a `warning` in the last case).
 
 ---
 
 ## 2. Cleaned data  (Meera -> Indrajith)
 
 - Location: `data/processed/<dataset>/` (Parquet)
-- Column lists come from `profile.json` (`numeric_columns`, `categorical_columns`)
+- Column lists come from `profile.json` (`numeric_columns`,
+  `categorical_columns`, `datetime_columns`, `id_columns`)
+- `id_columns` must not be used as features. Datetime columns are not used
+  directly as features; derive parts (hour, weekday) first if needed.
 - Rows changed or dropped are reported in `outputs/<dataset>/cleaning_report.json`
 
 ---
@@ -133,3 +152,4 @@ It runs all stages in order and writes every JSON file above.
 | Date | Change | Announced to |
 |---|---|---|
 | 06-11-2026 | Initial draft of all contracts | Indrajith, Ardra |
+| 07-11-2026 | profile.json: added `datetime_columns`, `id_columns`, `warning`, and per-column `kind` and `distinct`. Datetime columns no longer appear under `categorical_columns`. Problem type now follows the target's kind. | Indrajith, Ardra |
