@@ -1,0 +1,8 @@
+{
+  "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+  "cpus": 12,
+  "python": "3.13.7",
+  "spark_driver_memory": "4g",
+  "repeats": 5,
+  "ram_gb": "FILL IN"
+}
