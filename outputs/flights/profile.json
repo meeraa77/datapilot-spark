@@ -1,286 +1,499 @@
 {
-  "dataset_name": "flights",
+  "dataset": "flights",
   "row_count": 5819079,
-  "column_count": 31,
-  "duplicate_count": 0,
+  "column_count": 32,
   "columns": [
     {
       "name": "YEAR",
       "type": "int",
-      "null_count": 0,
-      "distinct": 1,
       "kind": "categorical",
-      "role": "feature"
+      "nulls": 0,
+      "distinct": 1
     },
     {
       "name": "MONTH",
       "type": "int",
-      "null_count": 0,
-      "distinct": 12,
       "kind": "categorical",
-      "role": "feature"
+      "nulls": 0,
+      "distinct": 12
     },
     {
       "name": "DAY",
       "type": "int",
-      "null_count": 0,
-      "distinct": 32,
       "kind": "numeric",
-      "role": "feature"
+      "nulls": 0,
+      "distinct": 32
     },
     {
       "name": "DAY_OF_WEEK",
       "type": "int",
-      "null_count": 0,
-      "distinct": 7,
       "kind": "categorical",
-      "role": "feature"
+      "nulls": 0,
+      "distinct": 7
     },
     {
       "name": "AIRLINE",
       "type": "string",
-      "null_count": 0,
-      "distinct": 13,
       "kind": "categorical",
-      "role": "feature"
+      "nulls": 0,
+      "distinct": 13
     },
     {
       "name": "FLIGHT_NUMBER",
       "type": "int",
-      "null_count": 0,
-      "distinct": 6712,
       "kind": "numeric",
-      "role": "id"
+      "nulls": 0,
+      "distinct": 6712
     },
     {
       "name": "TAIL_NUMBER",
       "type": "string",
-      "null_count": 14721,
-      "distinct": 4715,
       "kind": "categorical",
-      "role": "id"
+      "nulls": 14721,
+      "distinct": 4715
     },
     {
       "name": "ORIGIN_AIRPORT",
       "type": "string",
-      "null_count": 0,
-      "distinct": 602,
       "kind": "categorical",
-      "role": "feature"
+      "nulls": 0,
+      "distinct": 602
     },
     {
       "name": "DESTINATION_AIRPORT",
       "type": "string",
-      "null_count": 0,
-      "distinct": 602,
       "kind": "categorical",
-      "role": "feature"
+      "nulls": 0,
+      "distinct": 602
     },
     {
       "name": "SCHEDULED_DEPARTURE",
       "type": "int",
-      "null_count": 0,
-      "distinct": 1338,
       "kind": "numeric",
-      "role": "feature"
+      "nulls": 0,
+      "distinct": 1338
     },
     {
       "name": "DEPARTURE_TIME",
       "type": "int",
-      "null_count": 86153,
-      "distinct": 1496,
       "kind": "numeric",
-      "role": "leakage"
+      "nulls": 86153,
+      "distinct": 1496
     },
     {
       "name": "DEPARTURE_DELAY",
       "type": "int",
-      "null_count": 86153,
-      "distinct": 1201,
       "kind": "numeric",
-      "role": "leakage"
+      "nulls": 86153,
+      "distinct": 1201
     },
     {
       "name": "TAXI_OUT",
       "type": "int",
-      "null_count": 89047,
-      "distinct": 180,
       "kind": "numeric",
-      "role": "leakage"
+      "nulls": 89047,
+      "distinct": 180
     },
     {
       "name": "WHEELS_OFF",
       "type": "int",
-      "null_count": 89047,
-      "distinct": 1496,
       "kind": "numeric",
-      "role": "leakage"
+      "nulls": 89047,
+      "distinct": 1496
     },
     {
       "name": "SCHEDULED_TIME",
       "type": "int",
-      "null_count": 6,
-      "distinct": 532,
       "kind": "numeric",
-      "role": "feature"
+      "nulls": 6,
+      "distinct": 532
     },
     {
       "name": "ELAPSED_TIME",
       "type": "int",
-      "null_count": 105071,
-      "distinct": 698,
       "kind": "numeric",
-      "role": "leakage"
+      "nulls": 105071,
+      "distinct": 698
     },
     {
       "name": "AIR_TIME",
       "type": "int",
-      "null_count": 105071,
-      "distinct": 664,
       "kind": "numeric",
-      "role": "leakage"
+      "nulls": 105071,
+      "distinct": 664
     },
     {
       "name": "DISTANCE",
       "type": "int",
-      "null_count": 0,
-      "distinct": 1320,
       "kind": "numeric",
-      "role": "feature"
+      "nulls": 0,
+      "distinct": 1320
     },
     {
       "name": "WHEELS_ON",
       "type": "int",
-      "null_count": 92513,
-      "distinct": 1496,
       "kind": "numeric",
-      "role": "leakage"
+      "nulls": 92513,
+      "distinct": 1496
     },
     {
       "name": "TAXI_IN",
       "type": "int",
-      "null_count": 92513,
-      "distinct": 183,
       "kind": "numeric",
-      "role": "leakage"
+      "nulls": 92513,
+      "distinct": 183
     },
     {
       "name": "SCHEDULED_ARRIVAL",
       "type": "int",
-      "null_count": 0,
-      "distinct": 1490,
       "kind": "numeric",
-      "role": "feature"
+      "nulls": 0,
+      "distinct": 1490
     },
     {
       "name": "ARRIVAL_TIME",
       "type": "int",
-      "null_count": 92513,
-      "distinct": 1496,
       "kind": "numeric",
-      "role": "leakage"
+      "nulls": 92513,
+      "distinct": 1496
     },
     {
       "name": "ARRIVAL_DELAY",
       "type": "int",
-      "null_count": 105071,
-      "distinct": 1223,
       "kind": "numeric",
-      "role": "leakage"
+      "nulls": 105071,
+      "distinct": 1223
     },
     {
       "name": "DIVERTED",
       "type": "int",
-      "null_count": 0,
-      "distinct": 2,
       "kind": "categorical",
-      "role": "leakage"
+      "nulls": 0,
+      "distinct": 2
     },
     {
       "name": "CANCELLED",
       "type": "int",
-      "null_count": 0,
-      "distinct": 2,
       "kind": "categorical",
-      "role": "leakage"
+      "nulls": 0,
+      "distinct": 2
     },
     {
       "name": "CANCELLATION_REASON",
       "type": "string",
-      "null_count": 5729195,
-      "distinct": 4,
       "kind": "categorical",
-      "role": "leakage"
+      "nulls": 5729195,
+      "distinct": 4
     },
     {
       "name": "AIR_SYSTEM_DELAY",
       "type": "int",
-      "null_count": 4755640,
-      "distinct": 561,
       "kind": "numeric",
-      "role": "leakage"
+      "nulls": 4755640,
+      "distinct": 561
     },
     {
       "name": "SECURITY_DELAY",
       "type": "int",
-      "null_count": 4755640,
-      "distinct": 153,
       "kind": "numeric",
-      "role": "leakage"
+      "nulls": 4755640,
+      "distinct": 153
     },
     {
       "name": "AIRLINE_DELAY",
       "type": "int",
-      "null_count": 4755640,
-      "distinct": 1098,
       "kind": "numeric",
-      "role": "leakage"
+      "nulls": 4755640,
+      "distinct": 1098
     },
     {
       "name": "LATE_AIRCRAFT_DELAY",
       "type": "int",
-      "null_count": 4755640,
-      "distinct": 686,
       "kind": "numeric",
-      "role": "leakage"
+      "nulls": 4755640,
+      "distinct": 686
     },
     {
       "name": "WEATHER_DELAY",
       "type": "int",
-      "null_count": 4755640,
-      "distinct": 608,
       "kind": "numeric",
-      "role": "leakage"
+      "nulls": 4755640,
+      "distinct": 608
+    },
+    {
+      "name": "delayed",
+      "type": "int",
+      "kind": "categorical",
+      "nulls": 105071,
+      "distinct": 2
     }
   ],
-  "suggested_target": "is_delayed",
-  "suggested_problem_type": "classification",
-  "derived_target": {
-    "name": "is_delayed",
-    "source_column": "ARRIVAL_DELAY",
-    "rule": "ARRIVAL_DELAY > 15",
-    "created_in": "spark_jobs/clean.py"
-  },
-  "excluded_columns": [
+  "numeric_columns": [
+    "DAY",
     "FLIGHT_NUMBER",
-    "TAIL_NUMBER",
+    "SCHEDULED_DEPARTURE",
     "DEPARTURE_TIME",
     "DEPARTURE_DELAY",
     "TAXI_OUT",
     "WHEELS_OFF",
+    "SCHEDULED_TIME",
     "ELAPSED_TIME",
     "AIR_TIME",
+    "DISTANCE",
     "WHEELS_ON",
     "TAXI_IN",
+    "SCHEDULED_ARRIVAL",
     "ARRIVAL_TIME",
     "ARRIVAL_DELAY",
-    "DIVERTED",
-    "CANCELLED",
-    "CANCELLATION_REASON",
     "AIR_SYSTEM_DELAY",
     "SECURITY_DELAY",
     "AIRLINE_DELAY",
     "LATE_AIRCRAFT_DELAY",
     "WEATHER_DELAY"
-  ]
+  ],
+  "categorical_columns": [
+    "YEAR",
+    "MONTH",
+    "DAY_OF_WEEK",
+    "AIRLINE",
+    "TAIL_NUMBER",
+    "ORIGIN_AIRPORT",
+    "DESTINATION_AIRPORT",
+    "DIVERTED",
+    "CANCELLED",
+    "CANCELLATION_REASON",
+    "delayed"
+  ],
+  "datetime_columns": [],
+  "id_columns": [],
+  "duplicate_count": 0,
+  "sample_values": {
+    "YEAR": [
+      "2015",
+      "2015",
+      "2015",
+      "2015",
+      "2015"
+    ],
+    "MONTH": [
+      "2",
+      "2",
+      "2",
+      "2",
+      "2"
+    ],
+    "DAY": [
+      "2",
+      "2",
+      "2",
+      "2",
+      "2"
+    ],
+    "DAY_OF_WEEK": [
+      "1",
+      "1",
+      "1",
+      "1",
+      "1"
+    ],
+    "AIRLINE": [
+      "OO",
+      "OO",
+      "OO",
+      "OO",
+      "OO"
+    ],
+    "FLIGHT_NUMBER": [
+      "4560",
+      "4561",
+      "3455",
+      "6225",
+      "7391"
+    ],
+    "TAIL_NUMBER": [
+      "N802SK",
+      "N437SW",
+      "N218AG",
+      "N110SY",
+      "N8884E"
+    ],
+    "ORIGIN_AIRPORT": [
+      "SEA",
+      "SLC",
+      "BUR",
+      "ORD",
+      "SLC"
+    ],
+    "DESTINATION_AIRPORT": [
+      "PHX",
+      "SJC",
+      "PDX",
+      "DFW",
+      "GCC"
+    ],
+    "SCHEDULED_DEPARTURE": [
+      "1500",
+      "1500",
+      "1500",
+      "1500",
+      "1500"
+    ],
+    "DEPARTURE_TIME": [
+      "1457",
+      "1456",
+      "1455",
+      "1512",
+      "1456"
+    ],
+    "DEPARTURE_DELAY": [
+      "-3",
+      "-4",
+      "-5",
+      "12",
+      "-4"
+    ],
+    "TAXI_OUT": [
+      "23",
+      "14",
+      "15",
+      "23",
+      "10"
+    ],
+    "WHEELS_OFF": [
+      "1520",
+      "1510",
+      "1510",
+      "1535",
+      "1506"
+    ],
+    "SCHEDULED_TIME": [
+      "163",
+      "120",
+      "132",
+      "155",
+      "85"
+    ],
+    "ELAPSED_TIME": [
+      "161",
+      "114",
+      "142",
+      "155",
+      "72"
+    ],
+    "AIR_TIME": [
+      "134",
+      "97",
+      "124",
+      "126",
+      "58"
+    ],
+    "DISTANCE": [
+      "1107",
+      "584",
+      "817",
+      "802",
+      "410"
+    ],
+    "WHEELS_ON": [
+      "1834",
+      "1547",
+      "1714",
+      "1741",
+      "1604"
+    ],
+    "TAXI_IN": [
+      "4",
+      "3",
+      "3",
+      "6",
+      "4"
+    ],
+    "SCHEDULED_ARRIVAL": [
+      "1843",
+      "1600",
+      "1712",
+      "1735",
+      "1625"
+    ],
+    "ARRIVAL_TIME": [
+      "1838",
+      "1550",
+      "1717",
+      "1747",
+      "1608"
+    ],
+    "ARRIVAL_DELAY": [
+      "-5",
+      "-10",
+      "5",
+      "12",
+      "-17"
+    ],
+    "DIVERTED": [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "CANCELLED": [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ],
+    "CANCELLATION_REASON": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "AIR_SYSTEM_DELAY": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "SECURITY_DELAY": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "AIRLINE_DELAY": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "LATE_AIRCRAFT_DELAY": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "WEATHER_DELAY": [
+      "None",
+      "None",
+      "None",
+      "None",
+      "None"
+    ],
+    "delayed": [
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ]
+  },
+  "suggested_target": "delayed",
+  "problem_type": "classification",
+  "warning": null
 }

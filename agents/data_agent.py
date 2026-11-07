@@ -8,38 +8,63 @@ from pyspark.sql import functions as F
 
 # ---------------------------------------------------------------- reading
 def read_raw(spark, path):
-    # KEEP YOURS: replace this body with your existing read_raw code.
-    if path.endswith(".parquet"):
-        return spark.read.parquet(path)
-    return spark.read.csv(path, header=True, inferSchema=True)
+    if path.endswith(".csv"):
+        return spark.read.csv(path, header=True, inferSchema=True)
+    return spark.read.parquet(path)
 
 
 # ---------------------------------------------------------------- prepare
 def prepare_taxi(df):
-    # KEEP YOURS: paste your existing prepare_taxi body here.
     return df
 
 
 def prepare_flights(df):
-    # KEEP YOURS: paste your existing prepare_flights body here.
-    return df
+    """Target: 1 = arrived more than 15 minutes late, else 0."""
+    return df.withColumn(
+        "delayed",
+        F.when(F.col("ARRIVAL_DELAY").isNull(), F.lit(None).cast("int"))
+         .when(F.col("ARRIVAL_DELAY") > 15, F.lit(1))
+         .otherwise(F.lit(0)))
 
 
 # ---------------------------------------------------------------- config
-# KEEP YOURS: your existing flights entry (code_cols, fill_cols, zero_fill_cols,
-# drop_cols, leakage, hist_cols, scatter, hour). Only "path", "target" and
-# "prepare" are new keys. Adjust the paths and targets if they are wrong.
 DATASETS = {
     "taxi": {
-        "path": "data/raw/yellow_tripdata_2026-01.parquet",
-        "target": "fare_amount",
+        "raw": "data/raw/yellow_tripdata_2026-01.parquet",
         "prepare": prepare_taxi,
+        "target": "fare_amount",
+        "code_cols": ["VendorID", "RatecodeID", "payment_type",
+                      "PULocationID", "DOLocationID"],
+        "fill_cols": ["passenger_count", "RatecodeID",
+                      "congestion_surcharge", "Airport_fee"],
+        "zero_fill_cols": [],
+        "drop_cols": [],
+        "leakage": ["total_amount", "tip_amount", "tolls_amount", "mta_tax",
+                    "extra", "improvement_surcharge", "congestion_surcharge",
+                    "Airport_fee", "cbd_congestion_fee"],
+        "hist_cols": ["fare_amount", "trip_distance"],
+        "scatter": ["trip_distance", "fare_amount"],
+        "hour": lambda: F.hour("tpep_pickup_datetime"),
     },
     "flights": {
-        "path": "data/raw/flights.csv",
-        "target": "ARRIVAL_DELAY",
+        "raw": "data/raw/flights.parquet",
         "prepare": prepare_flights,
-        # KEEP YOUR EXISTING flights keys here
+        "target": "delayed",
+        "code_cols": ["FLIGHT_NUMBER", "DAY", "MONTH", "DAY_OF_WEEK"],
+        "fill_cols": ["DEPARTURE_TIME", "TAXI_OUT", "WHEELS_OFF",
+                      "SCHEDULED_TIME", "ELAPSED_TIME", "AIR_TIME",
+                      "WHEELS_ON", "TAXI_IN", "ARRIVAL_TIME"],
+        "zero_fill_cols": ["AIR_SYSTEM_DELAY", "SECURITY_DELAY", "AIRLINE_DELAY",
+                           "LATE_AIRCRAFT_DELAY", "WEATHER_DELAY"],
+        "drop_cols": ["CANCELLATION_REASON"],
+        "leakage": ["ARRIVAL_DELAY", "ARRIVAL_TIME", "WHEELS_ON", "TAXI_IN",
+                    "ELAPSED_TIME", "AIR_TIME", "AIR_SYSTEM_DELAY",
+                    "SECURITY_DELAY", "AIRLINE_DELAY", "LATE_AIRCRAFT_DELAY",
+                    "WEATHER_DELAY", "CANCELLED", "DIVERTED",
+                    "CANCELLATION_REASON"],
+        "hist_cols": ["ARRIVAL_DELAY", "DISTANCE"],
+        "scatter": ["DISTANCE", "ARRIVAL_DELAY"],
+        "hour": lambda: F.floor(F.col("SCHEDULED_DEPARTURE") / 100).cast("int"),
     },
 }
 
@@ -154,7 +179,7 @@ def run(name):
     cfg = DATASETS[name]
     spark = get_spark()
     try:
-        df = read_raw(spark, cfg["path"])
+        df = read_raw(spark, cfg["raw"])
         if cfg.get("prepare"):
             df = cfg["prepare"](df)
         profile = profile_dataset(df, name, target=cfg.get("target"))
