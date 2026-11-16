@@ -1,0 +1,104 @@
+{
+  "dataset_name": "taxi",
+  "problem_type": "regression",
+  "target": "fare_amount",
+  "models": [
+    {
+      "name": "LinearRegression (baseline)",
+      "metrics": {
+        "rmse": 1.9331,
+        "r2": 0.988,
+        "mae": 1.015
+      },
+      "train_seconds": 8.6
+    },
+    {
+      "name": "RandomForestRegressor",
+      "metrics": {
+        "rmse": 4.2761,
+        "r2": 0.9412,
+        "mae": 1.6937
+      },
+      "train_seconds": 21.9
+    }
+  ],
+  "best_model": "LinearRegression (baseline)",
+  "feature_importance": [
+    {
+      "feature": "total_amount",
+      "importance": 0.5674
+    },
+    {
+      "feature": "trip_distance",
+      "importance": 0.2164
+    },
+    {
+      "feature": "RatecodeID_oh_1",
+      "importance": 0.052
+    },
+    {
+      "feature": "tip_amount",
+      "importance": 0.0283
+    },
+    {
+      "feature": "tolls_amount",
+      "importance": 0.0251
+    },
+    {
+      "feature": "Airport_fee_oh_0.0",
+      "importance": 0.0131
+    },
+    {
+      "feature": "store_and_fwd_flag_oh_N",
+      "importance": 0.0109
+    },
+    {
+      "feature": "DOLocationID",
+      "importance": 0.0096
+    },
+    {
+      "feature": "RatecodeID_oh_4",
+      "importance": 0.0086
+    },
+    {
+      "feature": "congestion_surcharge_oh_0.0",
+      "importance": 0.0063
+    }
+  ],
+  "warnings": [
+    "Sampled about 1000000 of 3516799 rows for training."
+  ],
+  "features_used": {
+    "numeric": [
+      "trip_distance",
+      "PULocationID",
+      "DOLocationID",
+      "extra",
+      "tip_amount",
+      "tolls_amount",
+      "total_amount",
+      "pickup_hour",
+      "pickup_dow"
+    ],
+    "categorical": [
+      "VendorID",
+      "passenger_count",
+      "RatecodeID",
+      "store_and_fwd_flag",
+      "payment_type",
+      "mta_tax",
+      "improvement_surcharge",
+      "congestion_surcharge",
+      "Airport_fee",
+      "cbd_congestion_fee"
+    ]
+  },
+  "excluded_columns": {
+    "tpep_pickup_datetime": "datetime (use derived features)",
+    "tpep_dropoff_datetime": "target, leakage, or known only after the event",
+    "fare_amount": "target, leakage, or known only after the event"
+  },
+  "rows_train": 801055,
+  "rows_test": 199877,
+  "seconds": 85.2
+}
