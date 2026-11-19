@@ -1,34 +1,63 @@
-# ML Notes (Indrajith)
+# ML Agent Notes
 
-## Problem-type rules
-- numeric target -> regression
-- categorical target -> classification
-- no target -> clustering (KMeans, k = 2..6, best silhouette)
+The ML Agent (`agents/ml_agent.py`) reads `outputs/<dataset>/profile.json`, picks the problem type, trains a baseline and a random forest, and writes `outputs/<dataset>/model_results.json`.
 
-## Datasets
-| Dataset | Target | Problem | Baseline | Improved | Main metrics |
-|---|---|---|---|---|---|
-| taxi | fare_amount | regression | LinearRegression | RandomForestRegressor | RMSE, R2, MAE |
-| flights | delayed (arrival delay > 15 min) | classification | LogisticRegression | RandomForestClassifier | F1, AUC, accuracy |
+## How the problem type is chosen
 
-## Leakage decisions
-- Taxi: total_amount, tip_amount, tolls_amount, taxes and fees are excluded because they add up to the fare.
-- Taxi: dropoff time is excluded because it is only known after the trip.
-- Flights: the model predicts BEFORE departure, so DEPARTURE_DELAY, DEPARTURE_TIME, TAXI_OUT, WHEELS_OFF and everything after takeoff are excluded.
-- ID columns and the target are never used as features (tested in tests/test_ml.py).
+| Target kind | Problem |
+|---|---|
+| numeric | regression |
+| categorical | classification |
+| none | clustering (KMeans, k = 2 to 6, silhouette) |
 
-## Evaluation
-- 80/20 random split with seed 42; metrics are computed on the 20% test part only.
-- Training data is sampled to about 1,000,000 rows (laptop limit).
-- Flights is imbalanced, so F1 and AUC are reported, not accuracy alone.
+## Setup used for all runs
 
-## Results (fill in from model_results.json)
-| Dataset | Model | Metrics | Train seconds |
-|---|---|---|---|
-| taxi | | | |
-| flights | | | |
+- Train/test split: 80/20, seed 42. All metrics are on the held-out 20% only.
+- Training data is sampled down to about 1,000,000 rows on a laptop, and a warning records it.
+- Features never include the target, ID columns, datetimes, constant columns, leakage columns from the profile, or categoricals with more than 50 values.
+- Categoricals are one-hot encoded and numerics are scaled.
+- Random forest: 30 trees, max depth 8.
+
+## Taxi (regression, target: `fare_amount`)
+
+- Extra features derived from the pickup time: `pickup_hour`, `pickup_dow`.
+- Excluded as known only after the trip: `tpep_dropoff_datetime`, plus the leakage columns listed in `profile.json`.
+
+| Model | RMSE | R² | MAE | Train time |
+|---|---|---|---|---|
+| LinearRegression (baseline) | 7.8282 | 0.8028 | 4.4847 | 3.0 s |
+| RandomForestRegressor | 7.7772 | 0.8053 | 4.1376 | 10.7 s |
+
+Best model: RandomForestRegressor (lowest RMSE). Total ML stage time: 43.1 s.
+
+Observations:
+- The forest beats the baseline only slightly (RMSE 7.78 vs 7.83, R² 0.805 vs 0.803). The relationship is mostly linear, so the extra complexity buys little.
+- RMSE is well above MAE (7.8 vs 4.1 to 4.5), which points to a small number of large errors, likely outlier fares or distances.
+- Spark logged a Cholesky warning for the linear model (correlated features) and fell back to another solver. The model still trained.
+- Top features by random forest importance: `trip_distance` (0.6096), `RatecodeID_oh_1` (0.1587), `RatecodeID_oh_2` (0.0594). Trip distance dominates, as expected for fares, and the rate code (standard vs JFK fare) comes next.
+
+## Flights (classification, target: `delayed`)
+
+- Goal: predict delay before departure. Excluded as known after takeoff: `DEPARTURE_DELAY`, `DEPARTURE_TIME`, `TAXI_OUT`, `WHEELS_OFF`, `TAIL_NUMBER`, plus profile leakage columns (`ELAPSED_TIME`, `AIR_TIME`, `WHEELS_ON`, `TAXI_IN`, `ARRIVAL_TIME`, `ARRIVAL_DELAY`, `DIVERTED`, `CANCELLED`, `CANCELLATION_REASON`).
+- Skipped for too many categories: `FLIGHT_NUMBER` (6712), `ORIGIN_AIRPORT` (602), `DESTINATION_AIRPORT` (602). `YEAR` is constant.
+
+| Model | Accuracy | F1 | AUC | Train time |
+|---|---|---|---|---|
+| LogisticRegression (baseline) | TODO | TODO | TODO | TODO |
+| RandomForestClassifier | TODO | TODO | TODO | TODO |
+
+- Rows: 801,342 train and 199,909 test (about 1.0 million after sampling). Total ML stage time: 59.6 s.
+- Majority-class accuracy: 0.8214. A model that always predicts the majority class would already score about 82% accuracy, so accuracy alone is not meaningful here.
+- Best model (by F1): LogisticRegression (baseline). The random forest did not beat the simple baseline.
+- Warnings:
+  - High-cardinality columns skipped: FLIGHT_NUMBER, ORIGIN_AIRPORT, DESTINATION_AIRPORT.
+  - Sampled about 1,000,000 of 5,714,008 rows for training.
+  - Imbalanced target: judge by F1/AUC, not accuracy alone.
+
+Note: modest scores are expected and honest, because everything known only after takeoff is excluded. If the target is imbalanced, judge by F1 and AUC rather than accuracy alone.
 
 ## Limitations
-- Columns with more than 50 categories (airports, zones) are skipped. Target or frequency encoding would be a next step.
-- No cross-validation, because it is slow on a laptop. A single split was used.
-- Flights accuracy is modest on purpose: the strongest predictors are only known after takeoff.
+
+- Models are untuned (fixed hyperparameters) to keep runs laptop-friendly.
+- High-cardinality columns such as airports are skipped, which may cost some accuracy.
+- Results come from one seed and one split, with no cross-validation.
