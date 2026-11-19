@@ -43,8 +43,16 @@ Observations:
 
 | Model | Accuracy | F1 | AUC | Train time |
 |---|---|---|---|---|
-| LogisticRegression (baseline) | TODO | TODO | TODO | TODO |
-| RandomForestClassifier | TODO | TODO | TODO | TODO |
+| LogisticRegression (baseline) | 0.8213 | 0.7411 | 0.6456 | 8.4 s |
+| RandomForestClassifier | 0.8214 | 0.7409 | 0.6460 | 11.0 s |
+
+Weighted precision / recall: LogisticRegression 0.7389 / 0.8213, RandomForestClassifier 0.6747 / 0.8214.
+
+Observations:
+- Both models score about 0.821 accuracy, which equals the majority-class accuracy (0.8214). They do no better than always predicting "not delayed".
+- AUC is about 0.646 for both: only modestly better than random (0.5), so the pre-departure features carry a weak signal.
+- The two models are essentially tied (F1 0.7411 vs 0.7409). LogisticRegression is chosen as best by F1, and it is also faster to train.
+- This is the honest result for predicting delays before takeoff, since all post-departure columns are excluded. Weather, airline-level history or time-of-day patterns would be the next features to try.
 
 - Rows: 801,342 train and 199,909 test (about 1.0 million after sampling). Total ML stage time: 59.6 s.
 - Majority-class accuracy: 0.8214. A model that always predicts the majority class would already score about 82% accuracy, so accuracy alone is not meaningful here.
