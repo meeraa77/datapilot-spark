@@ -10,7 +10,7 @@
         "r2": 0.8028,
         "mae": 4.4847
       },
-      "train_seconds": 3.0
+      "train_seconds": 4.3
     },
     {
       "name": "RandomForestRegressor",
@@ -19,7 +19,7 @@
         "r2": 0.8053,
         "mae": 4.1376
       },
-      "train_seconds": 10.7
+      "train_seconds": 15.9
     }
   ],
   "best_model": "RandomForestRegressor",
@@ -101,5 +101,5 @@
   },
   "rows_train": 801055,
   "rows_test": 199877,
-  "seconds": 43.1
+  "seconds": 55.5
 }

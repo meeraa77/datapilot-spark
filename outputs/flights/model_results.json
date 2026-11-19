@@ -12,7 +12,7 @@
         "weighted_recall": 0.8213,
         "auc": 0.6456
       },
-      "train_seconds": 8.4
+      "train_seconds": 8.1
     },
     {
       "name": "RandomForestClassifier",
@@ -23,7 +23,7 @@
         "weighted_recall": 0.8214,
         "auc": 0.646
       },
-      "train_seconds": 11.0
+      "train_seconds": 11.5
     }
   ],
   "best_model": "LogisticRegression (baseline)",
@@ -117,5 +117,5 @@
   "rows_train": 801342,
   "rows_test": 199909,
   "majority_class_accuracy": 0.8214,
-  "seconds": 59.6
+  "seconds": 58.2
 }
