@@ -160,6 +160,9 @@ Other numbers are placeholders to show the shape.)
   "warnings": []
 }
 ```
+Location: outputs/<name>/model_results.json
+Extra fields: rows_train, rows_test, features_used, excluded_columns,
+majority_class_accuracy (classification only), seconds.
 
 ---
 
