@@ -56,6 +56,8 @@ def run(name="taxi"):
         "column_count": len(df.columns),
         "duplicate_count": dup_count,
         "columns": columns,
+        "numeric_columns": [c["name"] for c in columns if c["kind"] == "numeric"],
+        "categorical_columns": [c["name"] for c in columns if c["kind"] == "categorical"],
         "suggested_target": target,
         "suggested_problem_type": problem,
         "leakage_columns": cfg["leakage"],
