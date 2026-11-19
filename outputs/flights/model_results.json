@@ -1,0 +1,121 @@
+{
+  "dataset_name": "flights",
+  "problem_type": "classification",
+  "target": "delayed",
+  "models": [
+    {
+      "name": "LogisticRegression (baseline)",
+      "metrics": {
+        "accuracy": 0.8213,
+        "f1": 0.7411,
+        "weighted_precision": 0.7389,
+        "weighted_recall": 0.8213,
+        "auc": 0.6456
+      },
+      "train_seconds": 8.4
+    },
+    {
+      "name": "RandomForestClassifier",
+      "metrics": {
+        "accuracy": 0.8214,
+        "f1": 0.7409,
+        "weighted_precision": 0.6747,
+        "weighted_recall": 0.8214,
+        "auc": 0.646
+      },
+      "train_seconds": 11.0
+    }
+  ],
+  "best_model": "LogisticRegression (baseline)",
+  "feature_importance": [
+    {
+      "feature": "SCHEDULED_DEPARTURE",
+      "importance": 0.2745
+    },
+    {
+      "feature": "SCHEDULED_ARRIVAL",
+      "importance": 0.2656
+    },
+    {
+      "feature": "AIRLINE_oh_DL",
+      "importance": 0.09
+    },
+    {
+      "feature": "MONTH_oh_10",
+      "importance": 0.0526
+    },
+    {
+      "feature": "MONTH_oh_6",
+      "importance": 0.0403
+    },
+    {
+      "feature": "MONTH_oh_2",
+      "importance": 0.0327
+    },
+    {
+      "feature": "AIRLINE_oh_NK",
+      "importance": 0.0287
+    },
+    {
+      "feature": "MONTH_oh_9",
+      "importance": 0.0242
+    },
+    {
+      "feature": "AIRLINE_oh_B6",
+      "importance": 0.0126
+    },
+    {
+      "feature": "AIRLINE_oh_HA",
+      "importance": 0.0122
+    }
+  ],
+  "warnings": [
+    "High-cardinality columns skipped: FLIGHT_NUMBER, ORIGIN_AIRPORT, DESTINATION_AIRPORT",
+    "Sampled about 1000000 of 5714008 rows for training.",
+    "Imbalanced target: judge by F1/AUC, not accuracy alone."
+  ],
+  "features_used": {
+    "numeric": [
+      "SCHEDULED_DEPARTURE",
+      "SCHEDULED_TIME",
+      "DISTANCE",
+      "SCHEDULED_ARRIVAL"
+    ],
+    "categorical": [
+      "MONTH",
+      "DAY",
+      "DAY_OF_WEEK",
+      "AIRLINE"
+    ]
+  },
+  "excluded_columns": {
+    "YEAR": "constant column",
+    "FLIGHT_NUMBER": "too many categories (6712)",
+    "TAIL_NUMBER": "target, leakage, or known only after the event",
+    "ORIGIN_AIRPORT": "too many categories (602)",
+    "DESTINATION_AIRPORT": "too many categories (602)",
+    "DEPARTURE_TIME": "target, leakage, or known only after the event",
+    "DEPARTURE_DELAY": "target, leakage, or known only after the event",
+    "TAXI_OUT": "target, leakage, or known only after the event",
+    "WHEELS_OFF": "target, leakage, or known only after the event",
+    "ELAPSED_TIME": "target, leakage, or known only after the event",
+    "AIR_TIME": "target, leakage, or known only after the event",
+    "WHEELS_ON": "target, leakage, or known only after the event",
+    "TAXI_IN": "target, leakage, or known only after the event",
+    "ARRIVAL_TIME": "target, leakage, or known only after the event",
+    "ARRIVAL_DELAY": "target, leakage, or known only after the event",
+    "DIVERTED": "target, leakage, or known only after the event",
+    "CANCELLED": "target, leakage, or known only after the event",
+    "CANCELLATION_REASON": "target, leakage, or known only after the event",
+    "AIR_SYSTEM_DELAY": "target, leakage, or known only after the event",
+    "SECURITY_DELAY": "target, leakage, or known only after the event",
+    "AIRLINE_DELAY": "target, leakage, or known only after the event",
+    "LATE_AIRCRAFT_DELAY": "target, leakage, or known only after the event",
+    "WEATHER_DELAY": "target, leakage, or known only after the event",
+    "delayed": "target, leakage, or known only after the event"
+  },
+  "rows_train": 801342,
+  "rows_test": 199909,
+  "majority_class_accuracy": 0.8214,
+  "seconds": 59.6
+}

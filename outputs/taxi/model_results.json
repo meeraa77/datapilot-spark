@@ -1,0 +1,105 @@
+{
+  "dataset_name": "taxi",
+  "problem_type": "regression",
+  "target": "fare_amount",
+  "models": [
+    {
+      "name": "LinearRegression (baseline)",
+      "metrics": {
+        "rmse": 7.8282,
+        "r2": 0.8028,
+        "mae": 4.4847
+      },
+      "train_seconds": 3.9
+    },
+    {
+      "name": "RandomForestRegressor",
+      "metrics": {
+        "rmse": 7.7772,
+        "r2": 0.8053,
+        "mae": 4.1376
+      },
+      "train_seconds": 11.8
+    }
+  ],
+  "best_model": "RandomForestRegressor",
+  "feature_importance": [
+    {
+      "feature": "trip_distance",
+      "importance": 0.6096
+    },
+    {
+      "feature": "RatecodeID_oh_1",
+      "importance": 0.1587
+    },
+    {
+      "feature": "RatecodeID_oh_2",
+      "importance": 0.0594
+    },
+    {
+      "feature": "RatecodeID_oh_5",
+      "importance": 0.0255
+    },
+    {
+      "feature": "VendorID_oh_2",
+      "importance": 0.0218
+    },
+    {
+      "feature": "RatecodeID_oh_4",
+      "importance": 0.0217
+    },
+    {
+      "feature": "payment_type_oh_0",
+      "importance": 0.0213
+    },
+    {
+      "feature": "VendorID_oh_1",
+      "importance": 0.0201
+    },
+    {
+      "feature": "RatecodeID_oh_99",
+      "importance": 0.0189
+    },
+    {
+      "feature": "store_and_fwd_flag_oh_unknown",
+      "importance": 0.0126
+    }
+  ],
+  "warnings": [
+    "High-cardinality columns skipped: PULocationID, DOLocationID",
+    "Sampled about 1000000 of 3516799 rows for training."
+  ],
+  "features_used": {
+    "numeric": [
+      "trip_distance",
+      "pickup_hour",
+      "pickup_dow"
+    ],
+    "categorical": [
+      "VendorID",
+      "passenger_count",
+      "RatecodeID",
+      "store_and_fwd_flag",
+      "payment_type"
+    ]
+  },
+  "excluded_columns": {
+    "tpep_pickup_datetime": "datetime (use derived features)",
+    "tpep_dropoff_datetime": "target, leakage, or known only after the event",
+    "PULocationID": "too many categories (264)",
+    "DOLocationID": "too many categories (262)",
+    "fare_amount": "target, leakage, or known only after the event",
+    "extra": "target, leakage, or known only after the event",
+    "mta_tax": "target, leakage, or known only after the event",
+    "tip_amount": "target, leakage, or known only after the event",
+    "tolls_amount": "target, leakage, or known only after the event",
+    "improvement_surcharge": "target, leakage, or known only after the event",
+    "total_amount": "target, leakage, or known only after the event",
+    "congestion_surcharge": "target, leakage, or known only after the event",
+    "Airport_fee": "target, leakage, or known only after the event",
+    "cbd_congestion_fee": "target, leakage, or known only after the event"
+  },
+  "rows_train": 801055,
+  "rows_test": 199877,
+  "seconds": 57.0
+}
